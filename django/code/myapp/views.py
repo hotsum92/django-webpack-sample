@@ -1,10 +1,16 @@
 from django.shortcuts import render
 import json
 
-def index_template(request):
+def index_a(request):
     data = {
-        'app': 'Django',
-        'array': [1, 2, 3],
+        'app': 'A',
     }
     jsonData = json.dumps(data)
-    return render(request, 'index.html', {'data': jsonData})
+    return render(request, 'a.html', {'data': jsonData})
+
+def index_b(request):
+    data = {
+        'app': 'B',
+    }
+    jsonData = json.dumps(data)
+    return render(request, 'b.html', {'data': jsonData})
