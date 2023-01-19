@@ -6,5 +6,8 @@ const container = document.getElementById('root')
 const root = createRoot(container!)
 
 root.render(
-  <div>{ getData().app }</div>
+  <div>
+    <div>b.html</div>
+    <div>{ getData().app }</div>
+  </div>
 )

@@ -1,34 +1,25 @@
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 const path = require('path');
+const glob = require('glob');
 
-const clientEntry = {
-  production:  './src/index.tsx',
-  development: './src/index.development.tsx',
-}
-
-const devtool = {
-  development: 'inline-source-map'
-}
+const srcDir = './src';
+const entries = glob
+  .sync('entry/**/*.tsx', {
+    cwd: srcDir,
+  })
 
 module.exports = (env, argv) => {
 
-  return [
-    {
+  return entries.map(function(entry) {
+    const file = entry.split('/').pop()
+    const filename = file.substr(0, file.lastIndexOf('.'))
 
-      devServer: {
-        static: {
-          directory: './public',
-        },
-      },
-
-      devtool: devtool[argv.mode],
-
-      entry: clientEntry[argv.mode],
+    return {
+      entry: path.resolve(srcDir, entry),
 
       output: {
-        filename: 'index.js'
+        filename: filename + '.js',
       },
 
       module: {
@@ -50,11 +41,12 @@ module.exports = (env, argv) => {
 
       plugins: [
         new HtmlWebpackPlugin({
-          template: './public/index.html',
+          filename: filename + '.html',
+          template: path.resolve(__dirname, 'public/index.html'),
           inlineSource: '.(js|css)$',
+          inject: 'body',
         }),
-        new HtmlWebpackInlineSourcePlugin(),
       ],
-    },
-  ];
+    }
+  });
 }
