@@ -4,10 +4,8 @@
     <script type="application/json" id="json-data">
       {{ data | safe }}
     </script>
-  </head>
+  <script defer src="http://localhost:8000/static/myapp/vendors-node_modules_react-dom_client_js.js"></script><script defer src="http://localhost:8000/static/myapp/a.js"></script></head>
   <body>
     <div id="root"></div>
-    {% load static %}
-    <script defer="defer" src="{% static "myapp/a.js" %}"></script>
   </body>
 </html>

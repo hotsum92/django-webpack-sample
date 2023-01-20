@@ -1,6 +1,5 @@
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const path = require('path');
 const glob = require('glob');
@@ -55,16 +54,20 @@ module.exports = (env, argv) => {
       ...entries.map(function({ entry, filename }) {
         return new HtmlWebpackPlugin({
           filename: filename + '.html',
-          inject: false,
+          publicPath: 'http://localhost:8000/static/myapp',
+          chunks: [ filename ],
           minify: false,
           template: path.resolve(__dirname, 'public/index.html'),
-          templateParameters: {
-            jsref: '{% static "myapp/' + filename + '.js' + '" %}',
-          },
         })
       }),
       new CleanWebpackPlugin(),
-      new BundleAnalyzerPlugin(),
     ],
+
+    optimization: {
+      chunkIds: 'named',
+      splitChunks: {
+        chunks: 'all',
+      },
+    },
   }
 }
