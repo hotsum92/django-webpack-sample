@@ -4,6 +4,6 @@ interface Data {
 }
 
 export const getData = () => {
-  const data = `"{{ data | safe }}"`.slice(1).slice(0, -1)
-  return JSON.parse(data) as Data
+  const elem = document.getElementById("json-data")!
+  return JSON.parse(elem.textContent!) as Data
 }

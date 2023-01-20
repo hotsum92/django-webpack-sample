@@ -1,8 +1,13 @@
 ﻿<!DOCTYPE html>
 <html>
   <head>
+    <script type="application/json" id="json-data">
+      {{ data | safe }}
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    {% load static %}
+    <script defer="defer" src="<%= jsref %>"></script>
   </body>
 </html>

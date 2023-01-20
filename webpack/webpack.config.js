@@ -42,9 +42,12 @@ module.exports = (env, argv) => {
       plugins: [
         new HtmlWebpackPlugin({
           filename: filename + '.html',
+          inject: false,
+          minify: false,
           template: path.resolve(__dirname, 'public/index.html'),
-          inlineSource: '.(js|css)$',
-          inject: 'body',
+          templateParameters: {
+            jsref: '{% static "myapp/' + filename + '.js' + '" %}',
+          },
         }),
       ],
     }
