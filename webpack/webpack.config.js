@@ -1,5 +1,7 @@
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const path = require('path');
 const glob = require('glob');
 
@@ -8,39 +10,50 @@ const entries = glob
   .sync('entry/**/*.tsx', {
     cwd: srcDir,
   })
-
-module.exports = (env, argv) => {
-
-  return entries.map(function(entry) {
+  .map(function(entry) {
     const file = entry.split('/').pop()
     const filename = file.substr(0, file.lastIndexOf('.'))
 
     return {
-      entry: path.resolve(srcDir, entry),
+      entry,
+      filename,
+    }
+  })
 
-      output: {
-        filename: filename + '.js',
-      },
+module.exports = (env, argv) => {
+  return {
+    entry: entries.reduce(function(obj, { entry, filename }) {
+      return {
+        ...obj,
+        [filename]: path.resolve(srcDir, entry),
+      }
+    }, {}),
 
-      module: {
-        rules: [
-          {
-            test: /\.tsx?$/,
-            use: 'ts-loader',
-            exclude: /node_modules/,
-          },
-        ]
-      },
+    output: {
+      filename: '[name].js',
+      path: path.resolve(process.cwd(), 'dist'),
+    },
 
-      resolve: {
-        alias: {
-          '~': path.resolve(__dirname, 'src'),
+    module: {
+      rules: [
+        {
+          test: /\.tsx?$/,
+          use: 'ts-loader',
+          exclude: /node_modules/,
         },
-        extensions: ['.tsx', '.ts', '.js'],
-      },
+      ]
+    },
 
-      plugins: [
-        new HtmlWebpackPlugin({
+    resolve: {
+      alias: {
+        '~': path.resolve(__dirname, 'src'),
+      },
+      extensions: ['.tsx', '.ts', '.js'],
+    },
+
+    plugins: [
+      ...entries.map(function({ entry, filename }) {
+        return new HtmlWebpackPlugin({
           filename: filename + '.html',
           inject: false,
           minify: false,
@@ -48,8 +61,10 @@ module.exports = (env, argv) => {
           templateParameters: {
             jsref: '{% static "myapp/' + filename + '.js' + '" %}',
           },
-        }),
-      ],
-    }
-  });
+        })
+      }),
+      new CleanWebpackPlugin(),
+      new BundleAnalyzerPlugin(),
+    ],
+  }
 }
