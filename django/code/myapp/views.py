@@ -16,3 +16,18 @@ def index_b(request):
     }
     jsonData = json.dumps(data)
     return render(request, 'b.html', {'data': jsonData})
+
+def index_memo(request):
+    if request.method == 'POST':
+        value = request.POST["value"]
+        data = {
+            'value': value,
+        }
+        jsonData = json.dumps(data)
+        return render(request, 'memo-completed.html', {'data': jsonData})
+    else:
+        return render(request, 'memo.html')
+
+def index_memo_completed(request):
+    return render(request, 'memo.html')
+
